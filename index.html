@@ -62,10 +62,7 @@
 <body>
 
     <!-- Video -->
-    <video id="bgVideo" autoplay muted loop playsinline preload="auto">
-        <source src="video.mp4" type="video/mp4">
-        <source src="video.webm" type="video/webm">
-    </video>
+    <video id="bgVideo" autoplay muted playsinline preload="metadata"></video>
 
     <!-- Overlay -->
     <div class="overlay"></div>
@@ -75,30 +72,49 @@
         🔇
     </div>
 
-    <script>
-        const video = document.getElementById("bgVideo");
-        const btn = document.getElementById("soundBtn");
+<script>
+    const video = document.getElementById("bgVideo");
+    const btn = document.getElementById("soundBtn");
 
-        function toggleSound() {
-            video.muted = !video.muted;
+    // 🎬 Playlist
+    const videos = [
+        "video1.mp4",
+        "video2.mp4",
+        "video3.mp4",
+    ];
 
-            if (video.muted) {
-                btn.textContent = "🔇";
-            } else {
-                btn.textContent = "🔊";
-                video.play();
-            }
+    let currentIndex = 0;
+
+    function playVideo(index) {
+        video.src = videos[index];
+        video.load();   // important
+        video.play();
+    }
+
+    // Start first video
+    playVideo(currentIndex);
+
+    // Next video when current ends
+    video.addEventListener("ended", () => {
+        currentIndex = (currentIndex + 1) % videos.length;
+        playVideo(currentIndex);
+    });
+
+    // Sound toggle
+    function toggleSound() {
+        video.muted = !video.muted;
+        btn.textContent = video.muted ? "🔇" : "🔊";
+    }
+
+    // Enable sound on first click
+    document.addEventListener("click", () => {
+        if (video.muted) {
+            video.muted = false;
+            btn.textContent = "🔊";
+            video.play();
         }
-
-        // Optional: first interaction enables sound automatically
-        document.addEventListener("click", () => {
-            if (video.muted) {
-                video.muted = false;
-                btn.textContent = "🔊";
-                video.play();
-            }
-        }, { once: true });
-    </script>
+    }, { once: true });
+</script>
 
 </body>
 </html>
